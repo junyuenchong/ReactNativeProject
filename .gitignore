@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Build output
+android/.gradle/
+android/app/build/
+android/build/
+ios/build/
+ios/DerivedData/
+
+# Expo
+.expo/
+.expo/.metro-cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+expo-debug.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Xcode
+ios/Pods/
+*.xcworkspace
+*.xcuserstate
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Android/Gradle
+*.apk
+*.aab
+*.so
+.gradle/
+*.iml
+local.properties
+
+# Environment variables
+.env
+.env.*
