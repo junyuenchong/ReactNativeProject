@@ -23,10 +23,17 @@ A complete mobile e-commerce solution built with **React Native** (user app) and
 - 📧 Email Verification (Nodemailer)
 
 ### Screenshots
-#### 🔐 User & Admin Login and User Register & Edit Profile & User Address management (CRUD)
+#### 🔐 User
+#### Admin Login 
 ![image](https://github.com/user-attachments/assets/2af495ec-3fd9-4d6e-851f-fc2529b6ff02)
+
+#### 📝 User Register
 ![image](https://github.com/user-attachments/assets/689a3a78-044b-46d1-8f20-d40b5b039968)
+
+#### User Edit Profile
 ![image](https://github.com/user-attachments/assets/32219915-cddd-49e7-81f6-fd66a3e57891)
+
+#### 🏠 User Address management (CRUD)
 ![image](https://github.com/user-attachments/assets/1eda618a-03f9-4ae1-99f4-8c4e7d47b922)
 
 #### 🔁 Forgot Password
@@ -38,8 +45,10 @@ A complete mobile e-commerce solution built with **React Native** (user app) and
 #### 🧺 Cart
 ![image](https://github.com/user-attachments/assets/e6d9cd46-498d-46f0-bffe-398defff12da)
 
-#### 💳 PayPal Payment and Order History
+#### 💳 PayPal Payment 
 ![image](https://github.com/user-attachments/assets/864e86f6-7bdc-41b4-a518-74b9a7ec69f1)
+
+#### 📝 Order History
 ![image](https://github.com/user-attachments/assets/3cd4c174-8e61-4222-a29d-8166bd338bc5)
 
 ---
@@ -98,5 +107,6 @@ Integrated with **PayPal REST API** for secure checkout.
 # Run RESTful API
 cd api
 npm install
+# Run the Mobile App: MyFirstEProject
 npx react-native run-android
 
