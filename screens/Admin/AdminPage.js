@@ -186,6 +186,32 @@ const AdminPage = () => {
   };
 
   const handleSubmit = async () => {
+    const totalImages = images.length + existingImages.length;
+
+    // Validate: Category must be selected
+    if (!category) {
+      Alert.alert("Validation Error", "Please select a product category.");
+      return;
+    }
+
+    // Validate: Minimum of 3 images required
+    if (totalImages < 3) {
+      Alert.alert(
+        "Validation Error",
+        "Please upload at least 3 product images."
+      );
+      return;
+    }
+
+    // Validate: All other fields are empty (optional)
+    if (!name && !price && !colour && !description && !offer && !oldPrice) {
+      Alert.alert(
+        "Validation Error",
+        "Please fill in at least one product detail."
+      );
+      return;
+    }
+
     setLoading(true); // Start loading before the update process begins
 
     // Add a delay before proceeding with the update
@@ -473,13 +499,23 @@ const AdminPage = () => {
             renderItem={({ item }) => (
               <View style={styles.productItem}>
                 {/* Loop through the imageUrls array and display the images */}
-                {item.imageUrls?.map((url, index) => (
+                {/* {item.imageUrls?.map((url, index) => (
                   <Image
                     key={index}
-                    source={{ uri: `http://10.0.2.2:8000/${url}` }} // Constructing the image URL
+                    source={{ uri: `http://10.0.2.2:8000/${item.imageUrls[0]}` }}// Constructing the image URL
                     style={styles.productImage}
                   />
-                ))}
+                ))} */}
+
+          {/* Loop through the imageUrls array[0] and display the images */}
+                {item.imageUrls && item.imageUrls.length > 0 && (
+                  <Image
+                    source={{
+                      uri: `http://10.0.2.2:8000/${item.imageUrls[0]}`,
+                    }}
+                    style={styles.productImage}
+                  />
+                )}
 
                 <View style={styles.productDetails}>
                   <Text style={styles.productName}>{item.name}</Text>
@@ -533,6 +569,7 @@ const AdminPage = () => {
             renderItem={({ item }) => (
               <View style={styles.categoryItem}>
                 <Text style={styles.categoryName}>{item.name}</Text>
+
                 <TouchableOpacity
                   onPress={() => handleEditCategory(item)}
                   style={styles.editButton}
@@ -895,7 +932,7 @@ const styles = StyleSheet.create({
   productItem: {
     height: 80,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "left",
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
@@ -909,6 +946,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
+    marginRight: 10,
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -1007,6 +1045,9 @@ const styles = StyleSheet.create({
   randomproductCategory: {
     fontSize: 14,
     color: "gray",
+  },
+  EditandDeletebutton: {
+    marginleft: 500,
   },
 });
 

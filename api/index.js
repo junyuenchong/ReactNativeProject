@@ -54,6 +54,10 @@ const Product = require("./models/product");
 const Category = require("./models/Category");
 const UserInfo = require("./models/userinfo");
 const { userInfo } = require("os");
+
+//MangoDB URI
+const uri = process.env.MONGODB_URI;
+
 // Your AccountSID and Auth Token from console.twilio.com
 const TWILIO_SID = process.env.TWILIO_SID;
 const TWILIO_AUTH = process.env.TWILIO_AUTH;
@@ -81,8 +85,7 @@ app.use("/uploads", express.static(uploadDir));
 
 //Connected to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://junyuenchong1998:admin@cluster0.8dbtlsp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  .connect(uri,
     {
       // Old Version mongoose
       // useNewUrlParser: true,
@@ -696,7 +699,7 @@ app.get("/fetch-recommeneded-products/:userId", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* User Cart                                                             */
+/* User Cart Function                                                    */
 /* --------------------------------------------------------------------- */
 //AddToCart and update quantity
 app.post("/user/cart", async (req, res) => {
@@ -791,7 +794,7 @@ app.post("/user/delete-cart-item", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* User Payment                                                          */
+/* User Payment Gateway Integration                                                       */
 /* --------------------------------------------------------------------- */
 // 🚀 /paypal route for WebView
 app.get("/paypal", (req, res) => {
@@ -928,7 +931,7 @@ app.put("/updateprofile", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* Admin                                                                 */
+/* Admin Login                                                           */
 /* --------------------------------------------------------------------- */
 //endpoint to login the admin!
 app.post("/adminlogin", async (req, res) => {
@@ -961,7 +964,7 @@ app.post("/adminlogin", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* Admin managment User Data                                             */
+/* Admin User Management                                                 */
 /* --------------------------------------------------------------------- */
 // List all users
 app.get("/admin/users", async (req, res) => {
@@ -1050,7 +1053,7 @@ app.delete("/admin/users/:userId", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* Admin managment product                                               */
+/* Admin Product Management                                             */
 /* --------------------------------------------------------------------- */
 // Create a product
 app.post("/products", upload.array("image", 3), async (req, res) => {
@@ -1167,16 +1170,6 @@ app.delete("/products/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// app.delete("/products/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     await Product.findByIdAndDelete(id);
-//     res.json({ message: "Product deleted" });
-//   } catch (error) {
-//     console.error("Error deleting product:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
 
 // Endpoint to get one random products
 app.get("/products/random", async (req, res) => {
@@ -1197,7 +1190,7 @@ app.get("/products/random", async (req, res) => {
 });
 
 /* --------------------------------------------------------------------- */
-/* Admin managment categories                                            */
+/* Admin Category Management                                             */
 /* --------------------------------------------------------------------- */
 // Create a category
 app.post("/categories", async (req, res) => {
