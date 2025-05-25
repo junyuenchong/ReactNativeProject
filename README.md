@@ -15,12 +15,10 @@ A complete mobile e-commerce solution built with **React Native** (user app) and
 ### Features
 
 - 🛍️ Browse products with categories
-- 📦 Add to cart / remove from cart
-- ❤️ Wishlist and favorites
+- 📦 Add to cart / edit quantity&remove from cart
 - 🔒 Login / Register with JWT auth
 - 💳 PayPal payment gateway integration
 - 📄 Order history & tracking
-- 🔔 Push notifications with Firebase
 
 ### Screenshots
 
@@ -41,11 +39,8 @@ Built with **React + Redux + Chart.js**
 
 ### Features
 
-- 📦 Product management (CRUD)
-- 📊 Dashboard with sales analytics
-- 👥 User and order management
+- 📦 Product management and Category management (CRUD)
 - 🔐 Admin authentication
-- 💬 Manage reviews
 
 ### Screenshots
 
@@ -77,8 +72,8 @@ Integrated with **PayPal REST API** for secure checkout.
 | Backend    | Node.js, Express.js               |
 | Database   | MongoDB (Mongoose)                |
 | Auth       | JWT (JSON Web Tokens)             |
-| Payment    | PayPal REST API                   |
-| Storage    | Cloudinary / Firebase             |
+| Payment    | PayPal Gateway                    |
+          
 
 ---
 
@@ -87,14 +82,8 @@ Integrated with **PayPal REST API** for secure checkout.
 ### Clone the repos:
 
 ```bash
-# Mobile App
-git clone https://github.com/yourusername/eshop-app.git
-cd eshop-app
+# Run RESTful API
+cd api
 npm install
 npx react-native run-android
 
-# Admin Panel
-git clone https://github.com/yourusername/eshop-admin.git
-cd eshop-admin
-npm install
-npm start
