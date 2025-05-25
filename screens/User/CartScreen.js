@@ -29,7 +29,11 @@ const CartScreen = () => {
   const [defaultAddress, setDefaultAddress] = useState(null);
   const total = cart
     ?.map((item) => item.price * item.quantity)
-    .reduce((curr, prev) => curr + prev, 0);
+    .reduce((curr, prev) => curr + prev, 0)
+    .toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
   const { userId } = useContext(UserType);
 

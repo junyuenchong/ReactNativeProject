@@ -31,6 +31,8 @@ const AdminPage = () => {
   const [price, setPrice] = useState("");
   const [colour, setColour] = useState("");
   const [description, setDescription] = useState("");
+  const [offer, setOffer] = useState("");
+  const [oldPrice, setOldPrice] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [newPath, setNewPath] = useState("");
   const [newIcon, setNewIcoon] = useState("");
@@ -44,7 +46,7 @@ const AdminPage = () => {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const navigation = useNavigation();
-  const [randomProducts, setRandomProducts] = useState([]);
+  // const [randomProducts, setRandomProducts] = useState([]);
   const { userId, setUserId } = useContext(UserType);
   const [alertShown, setAlertShown] = useState(false); // State to track if alert has been shown
   const [randomProduct, setRandomProduct] = useState(null); // Initialize with null
@@ -70,21 +72,6 @@ const AdminPage = () => {
   useEffect(() => {
     fetchProducts();
   }, [searchQuery, selectedCategory]);
-
-  const handleSearchHistory = async () => {
-    try {
-      // Send search query to backend to save search history
-      await axios.post("http://10.0.2.2:8000/addsearchhistory", {
-        searchhistory: searchQuery, // The current search query
-      });
-      console.log("Search history added successfully");
-
-      // Fetch products based on the search query
-      fetchProducts();
-    } catch (error) {
-      console.error("Error saving search history:", error);
-    }
-  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -209,7 +196,8 @@ const AdminPage = () => {
       formData.append("price", price);
       formData.append("colour", colour);
       formData.append("description", description);
-
+      formData.append("offer", offer);
+      formData.append("oldPrice", oldPrice);
       // Append new images
       images.forEach((image) => {
         formData.append("image", {
@@ -292,6 +280,8 @@ const AdminPage = () => {
     setPrice(product.price);
     setColour(product.colour);
     setDescription(product.description);
+    setOffer(product.offer);
+    setOldPrice(product.oldPrice);
     setExistingImages(product.imageUrls || []);
     setImages([]); // clear new uploads
     setModalVisible(true);
@@ -316,6 +306,8 @@ const AdminPage = () => {
     setPrice("");
     setColour("");
     setDescription("");
+    setOffer("");
+    setOldPrice("");
     setEditingProduct(null);
     setModalVisible(false);
     setCategoryModalVisible(false);
@@ -417,7 +409,9 @@ const AdminPage = () => {
               styles.categoryButton,
               selectedCategory === "all" && styles.selectedCategoryButton,
             ]}
-            onPress={() => navigation.navigate("FetchProduct", { categoryId: "all" })}
+            onPress={() =>
+              navigation.navigate("FetchProduct", { categoryId: "all" })
+            }
           >
             <Text style={styles.categoryButtonText}>All Categories</Text>
           </TouchableOpacity>
@@ -438,7 +432,7 @@ const AdminPage = () => {
           ))}
         </ScrollView>
       </View>
-      
+
       <Pressable
         onPress={() => setModalVisible(true)}
         style={{
@@ -743,9 +737,10 @@ const AdminPage = () => {
 
             <TextInput
               style={styles.input}
-              placeholder="Product Price"
+              placeholder="Product Price RM"
               value={price}
               onChangeText={setPrice}
+              keyboardType="numeric"
             />
             <TextInput
               style={styles.input}
@@ -758,6 +753,20 @@ const AdminPage = () => {
               placeholder="Product Description"
               value={description}
               onChangeText={setDescription}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Product Offer"
+              value={offer}
+              onChangeText={setOffer}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Product Old Pricee"
+              value={oldPrice}
+              onChangeText={setOldPrice}
             />
 
             {loading ? (

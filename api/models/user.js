@@ -71,6 +71,8 @@ const userSchema = new mongoose.Schema(
           default: 1,
           min: 1,
         },
+        color: String, // ✅ add this
+        size: String, // ✅ and this
       },
     ],
     searchhistory: [

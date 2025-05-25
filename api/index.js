@@ -55,15 +55,18 @@ const Category = require("./models/Category");
 const UserInfo = require("./models/userinfo");
 const { userInfo } = require("os");
 // Your AccountSID and Auth Token from console.twilio.com
-const TWILIO_SID =  process.env.TWILIO_SID;
-const TWILIO_AUTH =  process.env.TWILIO_AUTH;
+const TWILIO_SID = process.env.TWILIO_SID;
+const TWILIO_AUTH = process.env.TWILIO_AUTH;
 const TWILIO_FROM = process.env.TWILIO_FROM;
+
 //Send email account
-const EMAIL_USER = "junyuenchong1998@gmail.com";
-const EMAIL_PASS = "lnhh fhqi gyef sgkg";
-//twilio
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
+
+//twilio client
 const client = require("twilio")(TWILIO_SID, TWILIO_AUTH);
-// PayPal
+
+// PayPal client id and  paypal secret
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
 
@@ -75,10 +78,6 @@ app.use(express.json());
 
 // Serve static files from the 'uploads' directory
 app.use("/uploads", express.static(uploadDir));
-
-app.listen(port, () => {
-  console.log("Server is running on port");
-});
 
 //Connected to MongoDB
 mongoose
@@ -97,8 +96,10 @@ mongoose
     console.log("Error connecting to MongoDb", err);
   });
 
-
-
+//Connect to port
+app.listen(port, () => {
+  console.log("Server is running on port");
+});
 
 /* --------------------------------------------------------------------- */
 /* User Register, Reset Password, User Login                             */
@@ -375,7 +376,7 @@ app.post("/reset-password", async (req, res) => {
 /* User Address                                                          */
 /* --------------------------------------------------------------------- */
 
-//creeate new address (user)  
+//creeate new address (user)
 app.post("/addresses", async (req, res) => {
   try {
     const { userId, address } = req.body;
@@ -427,9 +428,13 @@ app.put("/updateaddresses/:userId/:addressId", async (req, res) => {
     const index = user.addresses.findIndex(
       (addr) => addr._id.toString() === addressId
     );
-    if (index === -1) return res.status(404).json({ message: "Address not found" });
+    if (index === -1)
+      return res.status(404).json({ message: "Address not found" });
 
-    user.addresses[index] = { ...user.addresses[index]._doc, ...updatedAddress };
+    user.addresses[index] = {
+      ...user.addresses[index]._doc,
+      ...updatedAddress,
+    };
 
     await user.save();
     res.status(200).json({ message: "Address updated successfully" });
@@ -439,17 +444,17 @@ app.put("/updateaddresses/:userId/:addressId", async (req, res) => {
   }
 });
 
-//Delete User Address 
+//Delete User Address
 app.delete("/addresses/:userId/:addressId", async (req, res) => {
   try {
     const { userId, addressId } = req.params;
     const user = await User.findById(userId);
 
     if (!user) return res.status(404).json({ message: "User not found" });
-    
-// Remove the address with the specified ID from the user's address list
+
+    // Remove the address with the specified ID from the user's address list
     user.addresses = user.addresses.filter(
-      (addr) => addr._id.toString() !== addressId  // Keep addresses where the ID does not match the given addressId
+      (addr) => addr._id.toString() !== addressId // Keep addresses where the ID does not match the given addressId
     );
 
     await user.save();
@@ -693,60 +698,56 @@ app.get("/fetch-recommeneded-products/:userId", async (req, res) => {
 /* --------------------------------------------------------------------- */
 /* User Cart                                                             */
 /* --------------------------------------------------------------------- */
-
-//Cart function
+//AddToCart and update quantity
 app.post("/user/cart", async (req, res) => {
-  const { userId, product, cart } = req.body; // get product or cart from request
+  const { userId, product, cart } = req.body;
 
   try {
-    // If you receive the entire cart array from client
-    if (cart) {
-      for (const item of cart) {
-        if (!item.price) {
-          return res
-            .status(400)
-            .json({ message: "Each cart item must have a price." });
-        }
-      }
-    }
-
-    // Or if you just receive one product to add/update
-    if (product && !product.price) {
-      return res.status(400).json({ message: "Product price is required." });
-    }
+    if (!userId) return res.status(400).json({ message: "User ID is required." });
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found." });
 
-    if (product) {
-      // update or add product to user.cart logic here
-      const existingIndex = user.cart.findIndex(
-        (item) =>
-          item.id.toString() === product.id.toString() &&
-          item.color === product.color &&
-          item.size === product.size
-      );
-
-      if (existingIndex !== -1) {
-        user.cart[existingIndex].quantity = product.quantity;
-        user.cart[existingIndex].price = product.price; // update price too if needed
-      } else {
-        user.cart.push(product);
+    // Option 1: Whole cart replacement
+    if (cart && Array.isArray(cart)) {
+      const isValidCart = cart.every((item) => item?.price);
+      if (!isValidCart) {
+        return res.status(400).json({ message: "Each cart item must have a price." });
       }
-    } else if (cart) {
-      // If the whole cart array is sent, replace user.cart with it
+
       user.cart = cart;
     }
 
+    // Option 2: Single product update
+    if (product) {
+      if (!product.price) {
+        return res.status(400).json({ message: "Product price is required." });
+      }
+
+      const existingIndex = user.cart.findIndex(
+        (item) =>
+          item.id.toString() === product.id.toString() &&
+          (item.color || '').toLowerCase() === (product.color || '').toLowerCase() &&
+          (item.size || '').toLowerCase() === (product.size || '').toLowerCase()
+      );
+
+      if (existingIndex !== -1) {
+        // Update quantity and price
+        user.cart[existingIndex].quantity = product.quantity;
+        user.cart[existingIndex].price = product.price;
+      } else {
+        user.cart.push(product);
+      }
+    }
+
     await user.save();
-    return res.status(200).json({ message: "Cart updated", cart: user.cart });
+    return res.status(200).json({ message: "Cart updated successfully", cart: user.cart });
   } catch (err) {
-    console.error("Error in /user/cart:", err);
-    return res.status(500).json({ message: "Server error" });
+    console.error("❌ Error in /user/cart:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
-// routes/user.js or inside your main server file
-
+// Get Cart Product
 app.post("/user/get-cart", async (req, res) => {
   const { userId } = req.body;
 
@@ -764,7 +765,7 @@ app.post("/user/get-cart", async (req, res) => {
     res.status(500).json({ message: "Error fetching cart" });
   }
 });
-
+//Remove cart product
 app.post("/user/delete-cart-item", async (req, res) => {
   const { userId, productId, color, size } = req.body;
 
@@ -795,14 +796,14 @@ app.post("/user/delete-cart-item", async (req, res) => {
 // 🚀 /paypal route for WebView
 app.get("/paypal", (req, res) => {
   const amount = req.query.amount;
-  const clientId = process.env.PAYPAL_CLIENT_ID;
+  const clientId = PAYPAL_CLIENT_ID;
 
   if (!clientId) {
     return res.status(500).send("PayPal Client ID not configured.");
   }
 
-   // LIVE link <script src="https://www.paypal.com/sdk/js?client-id=LIVE_ID&currency=MYR"></script>
-   // Sandbox link <script src="https://www.paypal.com/sdk/js?client-id=${clientId}&currency=MYR"></script>
+  // LIVE link <script src="https://www.paypal.com/sdk/js?client-id=LIVE_ID&currency=MYR"></script>
+  // Sandbox link <script src="https://www.paypal.com/sdk/js?client-id=${clientId}&currency=MYR"></script>
   const htmlContent = `
     <html>
       <head>
@@ -873,7 +874,6 @@ app.get("/paypal", (req, res) => {
 
   res.send(htmlContent);
 });
-
 
 /* --------------------------------------------------------------------- */
 /* User Get and Update User Profile                                      */
@@ -1055,7 +1055,8 @@ app.delete("/admin/users/:userId", async (req, res) => {
 // Create a product
 app.post("/products", upload.array("image", 3), async (req, res) => {
   try {
-    const { name, category, colour, price, description } = req.body;
+    const { name, category, colour, price, description, offer, oldPrice } =
+      req.body;
 
     // Check if there are multiple files uploaded
     const imageUrls = req.files.map((file) => `uploads/${file.filename}`); // Collect all image URLs
@@ -1067,6 +1068,8 @@ app.post("/products", upload.array("image", 3), async (req, res) => {
       colour,
       price,
       description,
+      offer,
+      oldPrice,
     });
 
     const savedProduct = await product.save();
@@ -1081,10 +1084,26 @@ app.post("/products", upload.array("image", 3), async (req, res) => {
 app.put("/products/:id", upload.array("image", 3), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, colour, price, description, existingImages } =
-      req.body;
+    const {
+      name,
+      category,
+      colour,
+      price,
+      description,
+      existingImages,
+      offer,
+      oldPrice,
+    } = req.body;
 
-    const updateData = { name, category, colour, price, description };
+    const updateData = {
+      name,
+      category,
+      colour,
+      price,
+      description,
+      offer,
+      oldPrice,
+    };
 
     const product = await Product.findById(id);
     if (!product) {
@@ -1119,13 +1138,45 @@ app.put("/products/:id", upload.array("image", 3), async (req, res) => {
 app.delete("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Find the product first to get image URLs
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Delete image files from disk
+    if (product.imageUrls && product.imageUrls.length > 0) {
+      product.imageUrls.forEach((imagePath) => {
+        const fullPath = path.join(__dirname, imagePath);
+        if (fs.existsSync(fullPath)) {
+          fs.unlink(fullPath, (err) => {
+            if (err) console.error(`Error deleting file ${fullPath}:`, err);
+            else console.log(`Deleted file: ${fullPath}`);
+          });
+        }
+      });
+    }
+
+    // Delete the product from DB
     await Product.findByIdAndDelete(id);
-    res.json({ message: "Product deleted" });
+
+    res.json({ message: "Product and associated images deleted" });
   } catch (error) {
     console.error("Error deleting product:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+// app.delete("/products/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     await Product.findByIdAndDelete(id);
+//     res.json({ message: "Product deleted" });
+//   } catch (error) {
+//     console.error("Error deleting product:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 // Endpoint to get one random products
 app.get("/products/random", async (req, res) => {
@@ -1213,4 +1264,3 @@ app.get("/products/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-

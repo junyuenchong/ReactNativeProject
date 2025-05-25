@@ -300,6 +300,8 @@ const HomeScreen = () => {
               color: item.colour,
               size: item.description,
               oldPrice: item?.price,
+              offer: item.offer,
+              oldPrice:item.oldPrice,
               item,
             })
           }
