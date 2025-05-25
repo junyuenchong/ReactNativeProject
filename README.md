@@ -41,7 +41,7 @@ Built with **React + Redux + Chart.js**
 
 - 📦 Product management and Category management (CRUD)
 - 🔐 Admin authentication
-
+- 🛍️ Browse products with categories
 ### Screenshots
 
 #### 📊 Dashboard
