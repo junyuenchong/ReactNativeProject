@@ -108,5 +108,5 @@ Integrated with **PayPal REST API** for secure checkout.
 cd api
 npm install
 # Run the Mobile App: MyFirstEProject
-npx react-native run-android
+npx expo run:android
 
