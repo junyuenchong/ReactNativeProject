@@ -104,9 +104,11 @@ Integrated with **PayPal REST API** for secure checkout.
 ### Clone the repos:
 
 ```bash
-# Run RESTful API
-cd api
+# Install Dependencies
 npm install
+# Run the RESTful API
+cd api
+npm run
 # Run the Mobile App: MyFirstEProject
 npx expo run:android
 
