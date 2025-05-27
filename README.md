@@ -54,9 +54,6 @@ A complete mobile e-commerce solution built with **React Native** (user app) and
 ---
 
 ## 🧑‍💼 Admin Panel
-
-Built with **React + Redux + Node.js**
-
 ### Features
 
 - 📦 Product management and Category management (CRUD)
