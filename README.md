@@ -30,7 +30,7 @@ A comprehensive mobile e-commerce solution featuring a React Native user app and
 #### 📝 User Register
 ![image](https://github.com/user-attachments/assets/689a3a78-044b-46d1-8f20-d40b5b039968)
 
-#### User Edit Profile
+#### 👤 User Edit Profile
 ![image](https://github.com/user-attachments/assets/32219915-cddd-49e7-81f6-fd66a3e57891)
 
 #### 🏠 User Address management (CRUD)
