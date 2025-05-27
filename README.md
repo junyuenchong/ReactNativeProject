@@ -61,7 +61,7 @@ Payment Integration: Secure PayPal payment gateway to handle checkout and transa
 ![image](https://github.com/user-attachments/assets/864e86f6-7bdc-41b4-a518-74b9a7ec69f1)
 
 #### 📝 Order History
-![image](https://github.com/user-attachments/assets/3cd4c174-8e61-4222-a29d-8166bd338bc5)
+![image](https://github.com/user-attachments/assets/8a3fe872-0dac-46bb-9e1f-97fbfd4d551e)
 
 ---
 
