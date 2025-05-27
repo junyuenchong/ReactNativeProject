@@ -6,7 +6,7 @@ My First React Native Project
 ![License](https://img.shields.io/github/license/yourusername/eshop-app)
 ![Issues](https://img.shields.io/github/issues/yourusername/eshop-app)
 
-A comprehensive mobile e-commerce solution comprising a React Native user application and a React-based admin panel powered by Node.js. The system integrates PayPal for secure payment processing and provides complete order management functionality. All data, including products, users, and orders, are efficiently managed using a MongoDB database, ensuring scalability and reliability across the platform.
+A comprehensive mobile e-commerce solution featuring a React Native user app and a React Native + Node.js admin panel. The user app leverages Redux for efficient state management of the shopping cart, ensuring a seamless and responsive user experience. The platform supports secure PayPal payment integration and provides full order management capabilities. All application data—including products, users, and orders—is stored in a MongoDB database, delivering scalable and reliable backend support.
 
 ---
 
