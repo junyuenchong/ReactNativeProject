@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config();
 console.log("🧪 Debug .env -> PAYPAL_CLIENT_ID:", process.env.PAYPAL_CLIENT_ID);
 const express = require("express");
 const bodyParser = require("body-parser");
