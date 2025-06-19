@@ -7,9 +7,11 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import { UserType } from "../../UserContext";
+import { BackHandler } from "react-native";
+
 
 const PaymentScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,22 @@ const PaymentScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
   const defaultAddress = useSelector((state) => state.address?.defaultAddress);
 
+ // Handle Android back button to navigate to Cart
+ useFocusEffect(
+  React.useCallback(() => {
+    const backAction = () => {
+      navigation.navigate("Cart");
+      return true; // Prevent default behavior
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // Cleanup
+  }, [])
+);
   const totalPrice = cart
     ?.map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);

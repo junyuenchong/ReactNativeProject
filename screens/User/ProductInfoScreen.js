@@ -124,7 +124,8 @@ const ProductInfoScreen = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {route.params.carouselImages.map((item, index) => (
             <ImageBackground
-              style={{ width, height, marginTop: 25, resizeMode: "contain" }}
+              style={{ width, height, marginTop: 5, resizeMode: "contain" }}
+              resizeMode="contain" // ✅ shows full image without cropping
               source={{ uri: item }}
               key={index}
             >

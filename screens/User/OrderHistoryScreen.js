@@ -65,7 +65,7 @@ const OrderHistoryScreen = () => {
 
       <View style={styles.row}>
         <Text style={styles.label}>Total:</Text>
-        <Text style={styles.value}>${item.totalPrice?.toFixed(2)}</Text>
+        <Text style={styles.value}>RM {item.totalPrice?.toFixed(2)}</Text>
       </View>
 
       <View style={styles.row}>

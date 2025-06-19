@@ -84,6 +84,7 @@ const LoginScreen = () => {
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
         navigation.replace("Main");
+        
       })
       .catch((error) => {
         const message =
@@ -339,15 +340,6 @@ const LoginScreen = () => {
         >
           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
             Don't have an account? Sign Up
-          </Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => navigation.navigate("AdminPage")}
-          style={{ marginTop: 15 }}
-        >
-          <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-            Admin Login
           </Text>
         </Pressable>
         
