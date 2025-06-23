@@ -1182,7 +1182,7 @@ app.get("/products/random", async (req, res) => {
 });
 
 //FetchProduct
-pp.get("/adminfetchproducts", async (req, res) => {
+app.get("/adminfetchproducts", async (req, res) => {
   const { query, category, userId } = req.query;
   try {
     const filter = {};
