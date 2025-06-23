@@ -1,6 +1,5 @@
-import React, { useEffect, useCallback, useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef } from "react";
 import {
-  StyleSheet,
   View,
   Text,
   FlatList,
@@ -29,27 +28,19 @@ import AddressDisplay from "../../components/HomeScreen/AddressDisplay/AddressDi
 import AddressModal from "../../components/HomeScreen/AddressModal/AddressModal";
 import NoProductsMessage from "../../components/HomeScreen/NoProductsMessage/NoProductsMessage";
 import ProductCard from "../../components/HomeScreen/ProductCard/ProductsCard.";
+import useProductCard from "../../hooks/useProductCard";
+import useProducts from "../../hooks/useProducts";
 
 const HomeScreen = () => {
+  const flatListRef = useRef(null);
   const navigation = useNavigation();
-  const route = useRoute();
   const { userId, setUserId } = useContext(UserType);
   const insets = useSafeAreaInsets();
-  const flatListRef = useRef(null);
-
-  const [refreshing, setRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [addressModalVisible, setAddressModalVisible] = useState(false);
-
+  const [products, setProducts] = useState([]);
   const showNoProducts = useNoProducts({ refreshing, products });
 
-
-  const [skip, setSkip] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const limit = 5;
-  const hasCalledEnd = useRef(false);
   useBackButtonHandler({
     confirmExit: true,
     onExit: () => {
@@ -58,66 +49,13 @@ const HomeScreen = () => {
     },
   });
 
-  const fetchProducts = async ({
-    query = "",
-    category = "",
-    reset = false,
-    skip: customSkip = 0,
-  }) => {
-    try {
-      if (reset) setRefreshing(true);
 
-      const { data } = await axios.get(
-        "https://reactnativeproject.onrender.com/fetchproducts",
-        {
-          params: {
-            query: query.trim() || undefined,
-            category: category || undefined,
-            userId,
-            skip: customSkip,
-            limit,
-          },
-        }
-      );
-
-      const fetchedProducts = data.data || []; // ✅ FIXED: correctly extract array
-      console.log("✅ Products fetched:", fetchedProducts.length);
-
-      if (reset) {
-        setProducts(fetchedProducts);
-        setSkip(fetchedProducts.length);
-      } else {
-        setProducts((prev) => [...prev, ...fetchedProducts]);
-        setSkip((prev) => prev + fetchedProducts.length);
-      }
-
-      const moreAvailable = fetchedProducts.length > 0 && fetchedProducts.length === limit;
-      setHasMore(moreAvailable);
-      hasCalledEnd.current = !moreAvailable; // ✅ Block further loads if no more
-    } catch (err) {
-      console.error("Fetch error:", err?.response?.data || err.message);
-    } finally {
-      if (reset) setRefreshing(false);
-      setIsLoadingMore(false);
-    }
-  };
-
-
-
-  const loadMoreData = () => {
-    if (!hasMore || isLoadingMore || hasCalledEnd.current) {
-      console.log("⚠️ Skipping loadMoreData — hasMore:", hasMore, "isLoadingMore:", isLoadingMore, "alreadyCalled:", hasCalledEnd.current);
-      return;
-    }
-
-    setIsLoadingMore(true);
-    fetchProducts({
-      query: searchQuery,
-      category: categoryName,
-      skip,
-    });
-  };
-
+  const {
+    refreshing,
+    isLoadingMore,
+    fetchProducts,
+    loadMoreData,
+  } = useProducts({ userId, products, setProducts });
 
 
 
@@ -173,8 +111,8 @@ const HomeScreen = () => {
         onEndReachedThreshold={0.5}
         onEndReached={loadMoreData}
         maintainVisibleContentPosition={{
-  minIndexForVisible: 0,
-}}
+          minIndexForVisible: 0,
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -187,11 +125,12 @@ const HomeScreen = () => {
         }
         ListFooterComponent={() =>
           isLoadingMore ? (
-            <View style={{ padding: 10 }}>
-              <ActivityIndicator size="small" />
+            <View style={{ padding: 20, alignItems: "center" }}>
+              <ActivityIndicator size="large" color="blue" />
             </View>
           ) : null
         }
+
         ListHeaderComponent={
           <>
             <SearchBar

@@ -621,7 +621,10 @@ app.get("/fetchproducts", async (req, res) => {
       }
 
       const queryFilters = [{ name: { $regex: query, $options: "i" } }];
-      const cat = await Category.findOne({ name: { $regex: query, $options: "i" } }, "_id");
+      const cat = await Category.findOne(
+        { name: { $regex: query, $options: "i" } },
+        "_id"
+      );
       if (cat) queryFilters.push({ category: cat._id });
       filter.$or = queryFilters;
     }
@@ -640,9 +643,15 @@ app.get("/fetchproducts", async (req, res) => {
     const products = await Product.find(filter)
       .populate("category")
       .skip(Number(skip))
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .lean();
 
-    res.json({ data: products }); // ✅ consistent format
+    // 4. Remove duplicates by _id
+    const uniqueProducts = Array.from(
+      new Map(products.map((p) => [p._id.toString(), p])).values()
+    );
+
+    res.json({ data: uniqueProducts });
   } catch (err) {
     console.error("Error fetching products:", err);
     res.status(500).json({ message: "Server error" });
