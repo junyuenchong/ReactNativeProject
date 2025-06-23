@@ -618,6 +618,7 @@ app.get("/fetchproducts", async (req, res) => {
             },
           }
         ).catch(console.error);
+      }
 
       const queryFilters = [{ name: { $regex: query, $options: "i" } }];
       const cat = await Category.findOne({ name: { $regex: query, $options: "i" } }, "_id");
@@ -630,6 +631,7 @@ app.get("/fetchproducts", async (req, res) => {
       const cat = mongoose.Types.ObjectId.isValid(category)
         ? await Category.findById(category, "_id")
         : await Category.findOne({ name: category }, "_id");
+
       if (!cat) return res.status(404).json({ message: "Category not found" });
       filter.category = cat._id;
     }
@@ -640,7 +642,7 @@ app.get("/fetchproducts", async (req, res) => {
       .skip(Number(skip))
       .limit(Number(limit));
 
-    res.json(products);
+    res.json({ data: products }); // ✅ consistent format
   } catch (err) {
     console.error("Error fetching products:", err);
     res.status(500).json({ message: "Server error" });
