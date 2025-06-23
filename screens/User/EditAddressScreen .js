@@ -45,7 +45,7 @@ const EditAddressScreen = () => {
 
     try {
       await axios.put(
-        `http://10.0.2.2:8000/updateaddresses/${userId}/${address._id}`,
+        `https://reactnativeproject.onrender.com/updateaddresses/${userId}/${address._id}`,
         { address: form }
       );
       Alert.alert("Success", "Address updated successfully");

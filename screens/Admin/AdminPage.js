@@ -77,7 +77,7 @@ const AdminPage = () => {
     setLoading(true);
     setNoProductsFound(false); // Reset before search
     try {
-      const response = await axios.get("http://10.0.2.2:8000/fetchproducts", {
+      const response = await axios.get("https://reactnativeproject.onrender.com/fetchproducts", {
         params: {
           query: searchQuery, // search by product name
           category: selectedCategory === "all" ? "" : selectedCategory, // search by category
@@ -110,7 +110,7 @@ const AdminPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://10.0.2.2:8000/categories");
+      const response = await axios.get("https://reactnativeproject.onrender.com/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -128,7 +128,7 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await axios.post("http://10.0.2.2:8000/categories", {
+      const response = await axios.post("https://reactnativeproject.onrender.com/categories", {
         name: newCategory,
         path: newPath,
         icon: newIcon,
@@ -158,7 +158,7 @@ const AdminPage = () => {
 
     try {
       const response = await axios.put(
-        `http://10.0.2.2:8000/categories/${editingCategory._id}`,
+        `https://reactnativeproject.onrender.com/categories/${editingCategory._id}`,
         {
           name: newCategory,
         }
@@ -178,7 +178,7 @@ const AdminPage = () => {
 
   const handleDeleteCategory = async (id) => {
     try {
-      await axios.delete(`http://10.0.2.2:8000/categories/${id}`);
+      await axios.delete(`https://reactnativeproject.onrender.com/categories/${id}`);
       setCategories(categories.filter((cat) => cat._id !== id));
     } catch (error) {
       console.error("Error deleting category:", error);
@@ -249,7 +249,7 @@ const AdminPage = () => {
         if (editingProduct) {
           // Update product request (PUT)
           response = await axios.put(
-            `http://10.0.2.2:8000/products/${editingProduct._id}`,
+            `https://reactnativeproject.onrender.com/products/${editingProduct._id}`,
             formData,
             { headers }
           );
@@ -269,7 +269,7 @@ const AdminPage = () => {
         } else {
           // Add new product request (POST)
           response = await axios.post(
-            "http://10.0.2.2:8000/products",
+            "https://reactnativeproject.onrender.com/products",
             formData,
             {
               headers,
@@ -315,7 +315,7 @@ const AdminPage = () => {
 
   const handleDeleteProduct = async (id) => {
     try {
-      await axios.delete(`http://10.0.2.2:8000/products/${id}`);
+      await axios.delete(`https://reactnativeproject.onrender.com/products/${id}`);
       setProducts(products.filter((p) => p._id !== id));
       // ✅ Show remove product success alert
       Alert.alert("Deleted", "Product deleted successfully!");
@@ -352,7 +352,7 @@ const AdminPage = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       selectionLimit: 3 - totalImageCount, // Account for the remaining slots
-      allowsEditing: true,
+      allowsEditing: false,     
       quality: 0.7, // Optimal image quality for mobile upload
       aspect: [1, 1], // Crop the image to a square
     });
@@ -511,7 +511,7 @@ const AdminPage = () => {
                 {item.imageUrls && item.imageUrls.length > 0 && (
                   <Image
                     source={{
-                      uri: `http://10.0.2.2:8000/${item.imageUrls[0]}`,
+                      uri: `https://reactnativeproject.onrender.com/${item.imageUrls[0]}`,
                     }}
                     style={styles.productImage}
                   />
@@ -607,7 +607,7 @@ const AdminPage = () => {
                 ).map((url, index) => (
                   <Image
                     key={index}
-                    source={{ uri: `http://10.0.2.2:8000/${url}` }}
+                    source={{ uri: `https://reactnativeproject.onrender.com/${url}` }}
                     style={styles.productImage}
                     resizeMode="cover"
                   />

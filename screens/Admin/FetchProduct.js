@@ -24,7 +24,7 @@ const FetchProduct= () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://10.0.2.2:8000/fetchproducts', {
+      const response = await axios.get('https://reactnativeproject.onrender.com/fetchproducts', {
         params: {
           category: categoryId === 'all' ? '' : categoryId,
         },
@@ -41,7 +41,7 @@ const FetchProduct= () => {
     <View style={styles.productItem}>
       {item.imageUrls?.length > 0 && (
         <Image
-          source={{ uri: `http://10.0.2.2:8000/${item.imageUrls[0]}` }}
+          source={{ uri: `https://reactnativeproject.onrender.com/${item.imageUrls[0]}` }}
           style={styles.productImage}
         />
       )}

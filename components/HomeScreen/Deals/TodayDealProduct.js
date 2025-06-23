@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 //Offer Data
-import { offers } from "../../api/models/Offer";
+import { offers } from "../../../api/models/Offer";
 const TodayDealProduct = () => {
   const navigation = useNavigation();
   return (

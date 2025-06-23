@@ -29,7 +29,7 @@ const ProfileScreen = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `http://10.0.2.2:8000/profile/${userId}`
+          `https://reactnativeproject.onrender.com/profile/${userId}`
         );
         const { user } = response.data;
         setUser(user);
@@ -68,7 +68,7 @@ const ProfileScreen = () => {
     }
 
     try {
-      const response = await axios.put(`http://10.0.2.2:8000/updateprofile`, {
+      const response = await axios.put(`https://reactnativeproject.onrender.com/updateprofile`, {
         userId,
         name,
         password,

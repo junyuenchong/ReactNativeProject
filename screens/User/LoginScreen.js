@@ -79,7 +79,7 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://10.0.2.2:8000/login", user)
+      .post("https://reactnativeproject.onrender.com/login", user)
       .then((response) => {
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
@@ -111,7 +111,7 @@ const LoginScreen = () => {
     };
 
     axios
-      .post("http://10.0.2.2:8000/adminlogin", admin)
+      .post("https://reactnativeproject.onrender.com/adminlogin", admin)
       .then((response) => {
         const token = response.data.token;
         AsyncStorage.setItem("authAdminToken", token);

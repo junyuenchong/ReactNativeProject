@@ -6,7 +6,7 @@ import store from "./store";
 import { ModalPortal } from "react-native-modals";
 import { UserContext } from "./UserContext";
 import { BackHandler } from 'react-native';
-
+import "./global.css"
 const backgroundColor = '#FEBE10';          
 
 export default function App() {
@@ -29,11 +29,4 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+

@@ -40,7 +40,7 @@ const CartScreen = () => {
   const fetchAddresses = async () => {
     try {
       const response = await axios.get(
-        `http://10.0.2.2:8000/addresses/${userId}`
+        `https://reactnativeproject.onrender.com/addresses/${userId}`
       );
       const { addresses } = response.data || {};
       setAddresses(addresses);
@@ -73,7 +73,7 @@ const CartScreen = () => {
   // Fetch cart from backend on mount
   const fetchCart = async () => {
     try {
-      const response = await axios.post("http://10.0.2.2:8000/user/get-cart", {
+      const response = await axios.post("https://reactnativeproject.onrender.com/user/get-cart", {
         userId,
       });
       if (response.data.cart) {
@@ -118,7 +118,7 @@ const CartScreen = () => {
   // Update cart item quantity on backend
   const updateCartItem = async (item, quantity) => {
     try {
-      await axios.post("http://10.0.2.2:8000/user/cart", {
+      await axios.post("https://reactnativeproject.onrender.com/user/cart", {
         userId,
         product: {
           ...item,
@@ -134,7 +134,7 @@ const CartScreen = () => {
   const deleteCartItem = async (item) => {
     try {
       const response = await axios.post(
-        "http://10.0.2.2:8000/user/delete-cart-item",
+        "https://reactnativeproject.onrender.com/user/delete-cart-item",
         {
           userId,
           productId: item.id,

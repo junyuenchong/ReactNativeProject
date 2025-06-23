@@ -28,7 +28,7 @@ const AddressScreen = () => {
   const fetchAddresses = async () => {
     try {
       const response = await axios.get(
-        `http://10.0.2.2:8000/addresses/${userId}`
+        `https://reactnativeproject.onrender.com/addresses/${userId}`
       );
       const { addresses } = response.data;
       setAddresses(addresses);
@@ -44,7 +44,7 @@ const AddressScreen = () => {
 
   const updateDefaultAddress = async (addressId) => {
     try {
-      await axios.put(`http://10.0.2.2:8000/addresses/default/${userId}`, {
+      await axios.put(`https://reactnativeproject.onrender.com/addresses/default/${userId}`, {
         addressId,
       });
       setSelectedAddressId(addressId); // update UI immediately
@@ -58,7 +58,7 @@ const AddressScreen = () => {
   const deleteAddress = async (addressId) => {
     try {
       await axios.delete(
-        `http://10.0.2.2:8000/addresses/${userId}/${addressId}`
+        `https://reactnativeproject.onrender.com/addresses/${userId}/${addressId}`
       );
       alert("remove successfully");
       fetchAddresses(); // refresh after deletion

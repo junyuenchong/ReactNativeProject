@@ -34,7 +34,7 @@ const AddAdressScreen = () => {
 
   console.log(userId);
 
-  const url = "http://10.0.2.2:8000/addresses";
+  const url = "https://reactnativeproject.onrender.com/addresses";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -131,7 +131,7 @@ const AddAdressScreen = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `http://10.0.2.2:8000/profile/${userId}`
+          `https://reactnativeproject.onrender.com/profile/${userId}`
         );
         const { user } = response.data;
         setName(user.name); //Set User Name

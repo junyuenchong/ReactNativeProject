@@ -41,7 +41,7 @@ const OrderHistoryScreen = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `http://10.0.2.2:8000/orders/${userId}`
+          `https://reactnativeproject.onrender.com/orders/${userId}`
         );
         setOrders(
           Array.isArray(response.data) ? response.data : response.data.orders

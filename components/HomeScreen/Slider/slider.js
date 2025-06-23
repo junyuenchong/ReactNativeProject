@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { images } from "../../api/models/Image";
+import { images } from "../../../api/models/Image";
 import {
   FlatList,
   Image,
@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 
-function Index() {
+function slider() {
   const flatlistRef = useRef(null);
   const screenWidth = Dimensions.get("window").width;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Index;
+export default slider;

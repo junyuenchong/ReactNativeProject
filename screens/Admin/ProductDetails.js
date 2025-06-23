@@ -19,7 +19,7 @@ const ProductDetails = () => {
 
   const fetchProductDetail = async () => {
     try {
-      const response = await axios.get(`http://10.0.2.2:8000/products/${productId}`);
+      const response = await axios.get(`https://reactnativeproject.onrender.com/products/${productId}`);
       setProduct(response.data);
     } catch (error) {
       console.error('Error fetching product details:', error);
@@ -36,7 +36,7 @@ const ProductDetails = () => {
     <View style={styles.container}>
       {product && (
         <>
-          <Image source={{ uri: `http://10.0.2.2:8000/${product.imageUrl}` }} style={styles.productImage} />
+          <Image source={{ uri: `https://reactnativeproject.onrender.com/${product.imageUrl}` }} style={styles.productImage} />
           <Text style={styles.productName}>{product.name}</Text>
           <Text style={styles.productCategory}>
             {product.category ? product.category.name : 'No Category'}

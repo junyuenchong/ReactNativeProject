@@ -34,7 +34,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 
     const fullPhone = "+60" + phone.replace(/^0/, "");
     try {
-      await axios.post("http://10.0.2.2:8000/send-reset-code", {
+      await axios.post("https://reactnativeproject.onrender.com/send-reset-code", {
         method,
         email: method === "email" ? email : undefined,
         phone: method === "phone" ? fullPhone : undefined,
@@ -76,7 +76,7 @@ const ResetPasswordScreen = ({ navigation }) => {
     const fullPhone = "+60" + phone.replace(/^0/, "");
 
     try {
-      const res = await axios.post("http://10.0.2.2:8000/reset-password", {
+      const res = await axios.post("https://reactnativeproject.onrender.com/reset-password", {
         method,
         email: method === "email" ? email : undefined,
         phone: method === "phone" ? fullPhone : undefined,

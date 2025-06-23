@@ -39,7 +39,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": ["READ_MEDIA_IMAGES"]
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
@@ -47,6 +48,7 @@
       "package": "com.junyuen.MyFirstEProject"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "extra": {

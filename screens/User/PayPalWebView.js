@@ -42,7 +42,7 @@ const PayPalWebView = ({ navigation, route }) => {
     if (url.includes("success.payment")) {
       // Create order only if payment is successful
       axios
-        .post("http://10.0.2.2:8000/orders", {
+        .post("https://reactnativeproject.onrender.com/orders", {
           userId,
           cartItems,
           totalPrice,

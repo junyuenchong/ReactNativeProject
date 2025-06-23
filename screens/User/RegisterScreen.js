@@ -29,8 +29,8 @@ const RegisterScreen = () => {
   const phoneInputRef = useRef(null);
   const navigation = useNavigation();
 
-  const registerUrl = "http://10.0.2.2:8000/register";
-  const sendCodeUrl = "http://10.0.2.2:8000/send-code";
+  const registerUrl = "https://reactnativeproject.onrender.com/register";
+  const sendCodeUrl = "https://reactnativeproject.onrender.com/send-code";
 
   const sendCodeToVerificationMethod = async () => {
     const method = isPhoneVerification ? "phone" : "email";

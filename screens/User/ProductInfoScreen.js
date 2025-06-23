@@ -20,7 +20,7 @@ import { addToCart } from "../../redux/CartReducer";
 import axios from "axios";
 import { UserType } from "../../UserContext";
 
-const API_BASE_URL = "http://10.0.2.2:8000";
+const API_BASE_URL = "https://reactnativeproject.onrender.com";
 
 const ProductInfoScreen = () => {
   const route = useRoute();

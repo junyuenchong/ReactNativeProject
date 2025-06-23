@@ -602,14 +602,16 @@ app.get("/orders/:userId", async (req, res) => {
 
 //  get User Home products
 app.get("/fetchproducts", async (req, res) => {
-  const { query, category, userId } = req.query;
+  const { query, category, userId, skip = "0", limit = "5" } = req.query;
+
+  const parsedSkip = parseInt(skip);
+  const parsedLimit = parseInt(limit);
+
   try {
     const filter = {};
 
-    /* -------- 1. Handle search query & history ---------- */
     if (query) {
-      // Log search once (fire-and-forget—no need to await)
-      if (userId)
+      if (userId) {
         User.updateOne(
           { _id: userId },
           {
@@ -618,85 +620,45 @@ app.get("/fetchproducts", async (req, res) => {
             },
           }
         ).catch(console.error);
+      }
 
-      // Build name / category OR-filters
       const queryFilters = [{ name: { $regex: query, $options: "i" } }];
-
       const cat = await Category.findOne(
         { name: { $regex: query, $options: "i" } },
         "_id"
       );
       if (cat) queryFilters.push({ category: cat._id });
-
       filter.$or = queryFilters;
     }
 
-    /* -------- 2. Handle explicit category filter -------- */
     if (category) {
       const cat = mongoose.Types.ObjectId.isValid(category)
         ? await Category.findById(category, "_id")
         : await Category.findOne({ name: category }, "_id");
 
       if (!cat) return res.status(404).json({ message: "Category not found" });
+
       filter.category = cat._id;
     }
 
-    /* -------- 3. Fetch products ------------------------- */
-    const products = await Product.find(filter).populate("category");
-    res.json(products);
+    const products = await Product.find(filter)
+      .populate("category")
+      .sort({ createdAt: -1 })
+      .skip(parsedSkip)
+      .limit(parsedLimit);
+
+      res.json({ data: products });
+      console.log("📦 Raw data from API:", JSON.stringify(data, null, 2));
+
   } catch (err) {
-    console.error("Error fetching products:", err);
+    console.error("❌ Error fetching products:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-//fetchRecommendedProducinSearchMoodal
-app.get("/fetch-recommeneded-products/:userId", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
 
-    if (!user || user.searchhistory.length === 0) {
-      return res.json([]);
-    }
 
-    // 1. Sort search history by most recent
-    const sortedHistory = [...user.searchhistory].sort(
-      (a, b) => new Date(b.searchedAt) - new Date(a.searchedAt)
-    );
 
-    // 2. Get the most recent 5 entries (with keyword and date)
-    const recentSearches = sortedHistory.slice(0, 5);
-
-    // 3. Build OR filters for Product name
-    const orFilters = recentSearches.map((entry) => ({
-      name: { $regex: entry.historyname, $options: "i" },
-    }));
-
-    // 4. Fetch all matching products
-    const matchedProducts = await Product.find({ $or: orFilters });
-
-    // 5. Sort matched products based on how recently their name matches a keyword
-    const sortedMatchedProducts = matchedProducts.sort((a, b) => {
-      const aDate =
-        recentSearches.find((entry) =>
-          new RegExp(entry.historyname, "i").test(a.name)
-        )?.searchedAt || new Date(0); // fallback to old date
-
-      const bDate =
-        recentSearches.find((entry) =>
-          new RegExp(entry.historyname, "i").test(b.name)
-        )?.searchedAt || new Date(0);
-
-      return new Date(bDate) - new Date(aDate); // most recent first
-    });
-
-    // 6. Return top 10 sorted products
-    res.json(sortedMatchedProducts.slice(0, 10));
-  } catch (error) {
-    console.error("Error fetching history-based sorted products:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 /* --------------------------------------------------------------------- */
 /* User Cart Function                                                    */
