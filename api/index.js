@@ -21,28 +21,29 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
+// Cloudinary setup
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // Set up storage with multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    console.log("Setting destination:", uploadDir); // Log destination path
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    console.log("Setting filename:", uniqueName); // Log filename
-    cb(null, uniqueName);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "uploads", // Optional folder in Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png"], // Acceptable formats
+    transformation: [{ width: 500, height: 500, crop: "limit" }], // Optional resize
   },
 });
 
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype !== "image/jpeg") {
-      return cb(new Error("Only JPEG images are allowed."));
-    }
-    cb(null, true);
-  },
-});
+const upload = multer({ storage: storage });
+
+
 
 const app = express();
 const port = 8000;
@@ -80,8 +81,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
 
-// Serve static files from the 'uploads' directory
-app.use("/uploads", express.static(uploadDir));
 
 //Connected to MongoDB
 mongoose

@@ -24,7 +24,7 @@ const FetchProduct= () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://reactnativeproject.onrender.com/fetchproducts', {
+      const response = await axios.get('https://reactnativeproject.onrender.com/adminfetchproducts', {
         params: {
           category: categoryId === 'all' ? '' : categoryId,
         },
