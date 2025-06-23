@@ -602,14 +602,12 @@ app.get("/orders/:userId", async (req, res) => {
 
 //  get User Home products
 app.get("/fetchproducts", async (req, res) => {
-  const { query, category, userId, skip = "0", limit = "5" } = req.query;
-
-  const parsedSkip = parseInt(skip);
-  const parsedLimit = parseInt(limit);
+  const { query, category, userId, skip = 0, limit = 10 } = req.query;
 
   try {
     const filter = {};
 
+    // 1. Search filter
     if (query) {
       if (userId) {
         User.updateOne(
@@ -620,43 +618,34 @@ app.get("/fetchproducts", async (req, res) => {
             },
           }
         ).catch(console.error);
-      }
 
       const queryFilters = [{ name: { $regex: query, $options: "i" } }];
-      const cat = await Category.findOne(
-        { name: { $regex: query, $options: "i" } },
-        "_id"
-      );
+      const cat = await Category.findOne({ name: { $regex: query, $options: "i" } }, "_id");
       if (cat) queryFilters.push({ category: cat._id });
       filter.$or = queryFilters;
     }
 
+    // 2. Category filter
     if (category) {
       const cat = mongoose.Types.ObjectId.isValid(category)
         ? await Category.findById(category, "_id")
         : await Category.findOne({ name: category }, "_id");
-
       if (!cat) return res.status(404).json({ message: "Category not found" });
-
       filter.category = cat._id;
     }
 
+    // 3. Fetch with skip & limit (pagination)
     const products = await Product.find(filter)
       .populate("category")
-      .sort({ createdAt: -1 })
-      .skip(parsedSkip)
-      .limit(parsedLimit);
+      .skip(Number(skip))
+      .limit(Number(limit));
 
-      res.json({ data: products });
-      console.log("📦 Raw data from API:", JSON.stringify(data, null, 2));
-
+    res.json(products);
   } catch (err) {
-    console.error("❌ Error fetching products:", err);
+    console.error("Error fetching products:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 
 
