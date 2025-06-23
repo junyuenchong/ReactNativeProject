@@ -1053,7 +1053,7 @@ app.post("/products", upload.array("image", 3), async (req, res) => {
       req.body;
 
     // Check if there are multiple files uploaded
-    const imageUrls = req.files.map((file) => `uploads/${file.filename}`); // Collect all image URLs
+    const imageUrls = req.files.map((file) => file.path);  // Collect all image URLs
 
     const product = new Product({
       name,

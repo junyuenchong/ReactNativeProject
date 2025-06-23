@@ -352,7 +352,7 @@ const AdminPage = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       selectionLimit: 3 - totalImageCount, // Account for the remaining slots
-      allowsEditing: false,     
+      allowsEditing: false,
       quality: 0.7, // Optimal image quality for mobile upload
       aspect: [1, 1], // Crop the image to a square
     });
@@ -507,12 +507,10 @@ const AdminPage = () => {
                   />
                 ))} */}
 
-          {/* Loop through the imageUrls array[0] and display the images */}
+                {/* Loop through the imageUrls array[0] and display the images */}
                 {item.imageUrls && item.imageUrls.length > 0 && (
                   <Image
-                    source={{
-                      uri: `https://reactnativeproject.onrender.com/${item.imageUrls[0]}`,
-                    }}
+                    source={{ uri: item.imageUrls[0] }}
                     style={styles.productImage}
                   />
                 )}
@@ -601,17 +599,22 @@ const AdminPage = () => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.imageScrollContainer}
               >
-                {(item.imageUrls?.length > 0
-                  ? item.imageUrls
-                  : [item.imageUrl]
-                ).map((url, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: `https://reactnativeproject.onrender.com/${url}` }}
-                    style={styles.productImage}
-                    resizeMode="cover"
-                  />
-                ))}
+                {(item.imageUrls?.length > 0 ? item.imageUrls : [item.imageUrl])
+                  .filter((url) => !!url)
+                  .map((url, index) => {
+                    console.log("🧪 Debug imageUrls:", item.name,item.imageUrls);
+                    return (
+                      <Image
+                        key={index}
+                        source={{ uri: url.imageUrl }}
+                        style={styles.productImage}
+                        resizeMode="cover"
+                        onError={(e) => {
+                          console.warn(`❌ Failed to load image: ${url}`, e.nativeEvent);
+                        }}
+                      />
+                    );
+                  })}
               </ScrollView>
 
               <Text style={styles.productName}>{item.name}</Text>
@@ -721,7 +724,7 @@ const AdminPage = () => {
               {existingImages.map((url, index) => (
                 <View key={index} style={{ marginRight: 8, marginBottom: 8 }}>
                   <Image
-                    source={{ uri: `http://10.0.2.2:8000/${url}` }}
+                    source={{ uri: url }}
                     style={styles.imagePreview}
                   />
                   <TouchableOpacity
