@@ -1181,6 +1181,55 @@ app.get("/products/random", async (req, res) => {
   }
 });
 
+//FetchProduct
+pp.get("/adminfetchproducts", async (req, res) => {
+  const { query, category, userId } = req.query;
+  try {
+    const filter = {};
+
+    /* -------- 1. Handle search query & history ---------- */
+    if (query) {
+      // Log search once (fire-and-forget—no need to await)
+      if (userId)
+        User.updateOne(
+          { _id: userId },
+          {
+            $addToSet: {
+              searchhistory: { historyname: query, searchedAt: new Date() },
+            },
+          }
+        ).catch(console.error);
+
+      // Build name / category OR-filters
+      const queryFilters = [{ name: { $regex: query, $options: "i" } }];
+
+      const cat = await Category.findOne(
+        { name: { $regex: query, $options: "i" } },
+        "_id"
+      );
+      if (cat) queryFilters.push({ category: cat._id });
+
+      filter.$or = queryFilters;
+    }
+
+    /* -------- 2. Handle explicit category filter -------- */
+    if (category) {
+      const cat = mongoose.Types.ObjectId.isValid(category)
+        ? await Category.findById(category, "_id")
+        : await Category.findOne({ name: category }, "_id");
+
+      if (!cat) return res.status(404).json({ message: "Category not found" });
+      filter.category = cat._id;
+    }
+
+    /* -------- 3. Fetch products ------------------------- */
+    const products = await Product.find(filter).populate("category");
+    res.json(products);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 /* --------------------------------------------------------------------- */
 /* Admin Category Management                                             */
 /* --------------------------------------------------------------------- */

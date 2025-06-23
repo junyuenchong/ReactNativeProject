@@ -69,7 +69,7 @@ const HomeScreen = () => {
     setSearchModalVisible,
     fetchRecommendedProduct,
     getSearchHistory,
-    onRefresh,
+   
   } = useSearchBar({ userId, categoryName, fetchProducts });
 
   const {
@@ -150,6 +150,9 @@ const HomeScreen = () => {
               searchHistory={searchHistory}
               setSearchModalVisible={setSearchModalVisible}
               handleLogout={handleLogout}
+              recommended= {recommended}
+              getSearchHistory= {getSearchHistory}
+            fetchRecommendedProduct={fetchRecommendedProduct}
             />
             <SearchModal
               searchModalVisible={searchModalVisible}

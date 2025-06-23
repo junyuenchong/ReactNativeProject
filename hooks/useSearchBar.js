@@ -4,7 +4,7 @@ import axios from "axios";
 import { Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function useSearchBar({ userId, selectedCategory, fetchProducts}) {
+export default function useSearchBar({ userId, selectedCategory, fetchProducts }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
   const [recommended, setRecommended] = useState([]);
@@ -15,78 +15,92 @@ export default function useSearchBar({ userId, selectedCategory, fetchProducts})
       Alert.alert("Search", "Please enter a search keyword.");
       return;
     }
-  
-    await fetchProducts?.({
-      query: searchQuery,
-      category: selectedCategory,
-      reset: true,
-    });
-  
+    await fetchProducts({ query: searchQuery, category: selectedCategory ?? "", reset: true });
     await fetchRecommendedProduct();
     await getSearchHistory();
   };
-  
-  
 
-//fetchSearchProducinSearchMoodal
-const getSearchHistory = async () => {
-  if (!userId) return;
-  try {
-    const response = await axios.get(
-      `https://reactnativeproject.onrender.com/profile/${userId}`
-    );
-    const history = response.data.user?.searchhistory || [];
 
-    if (history.length === 0) {
-      setSearchHistory([]);
-    } else {
-      setSearchHistory(history.reverse().slice(0, 5));
+
+  //fetchSearchProducinSearchMoodal
+  const getSearchHistory = async () => {
+    if (!userId) return; // Exit if userId is not available
+  
+    try {
+      // Fetch user profile to get search history
+      const res = await axios.get(`https://reactnativeproject.onrender.com/profile/${userId}`);
+  
+      // Extract search history or fallback to empty array
+      const history = res.data?.user?.searchhistory ?? [];
+  
+      // Get the 5 most recent searches (reversed)
+      const latest = history.slice().reverse().slice(0, 5);
+  
+      // Update state only if the new history differs from the old one
+      setSearchHistory(prev =>
+        JSON.stringify(prev) !== JSON.stringify(latest) ? latest : prev
+      );
+    } catch (err) {
+      // Log error if request fails
+      console.error("History fetch failed:", err.message);
     }
-  } catch (error) {
-    console.error("History fetch failed", error);
-  }
-};
-
-
-const fetchRecommendedProduct = async () => {
-  if (!userId) return;
-  try {
-    const res = await axios.get(
-      `https://reactnativeproject.onrender.com/fetch-recommeneded-products/${userId}`
-    );
-    setRecommended(res.data);
-  } catch (err) {
-    console.error("Error loading recommended products", err);
-  }
-};
-
-
+  };
   
+
+
+  const fetchRecommendedProduct = async () => {
+    if (!userId) return;
+    try {
+      const res = await axios.get(
+        `https://reactnativeproject.onrender.com/fetch-recommeneded-products/${userId}`
+      );
+      setRecommended(res.data);
+    } catch (err) {
+      console.error("Error loading recommended products", err);
+    }
+  };
+
+
+
   // ⏱️ Pull-to-refresh logic (exported to HomeScreen)
   const onRefresh = useCallback(async () => {
     setSkip(0);
-    hasCalledEnd.current = false;         
+    hasCalledEnd.current = false;
     await fetchProducts({
       query: searchQuery,
       category: selectedCategory,
-      reset: true,            
-      skip: 0,                      
+      reset: true,
+      skip: 0,
     });
   }, [searchQuery, selectedCategory]);
-  
 
-// 🔄 Refresh on screen focus or user change
-useFocusEffect(
-  useCallback(() => {
-    const loadData = async () => {
-      await onRefresh();                // Refresh product list
-      await getSearchHistory();         // Load recent searches
-      await fetchRecommendedProduct();  // Load recommendations
+
+  // 🔄 Refresh on screen focus or user change
+  useFocusEffect(
+    useCallback(() => {
+      if (!userId) return;
+
+      const loadData = async () => {
+        console.log("🔄 Loading data on screen focus for:", userId);
+        await onRefresh();
+      };
+
+      loadData();
+    }, [userId])
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await getSearchHistory();
+        await fetchRecommendedProduct();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    loadData();
-  }, [userId])
-);
+    fetchData();
+  }, [userId]);
 
   return {
     searchQuery,
@@ -96,9 +110,9 @@ useFocusEffect(
     recommended,
     searchModalVisible,
     setSearchModalVisible,
-    fetchRecommendedProduct,  
-    getSearchHistory, 
+    fetchRecommendedProduct,
+    getSearchHistory,
     onRefresh,
- 
+
   };
 }

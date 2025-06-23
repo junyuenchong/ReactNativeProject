@@ -10,6 +10,10 @@ const SearchBar = ({
   searchHistory,
   setSearchModalVisible,
   handleLogout,
+  recommended,
+  getSearchHistory,
+  fetchRecommendedProduct
+
 }) => {
   return (
     <View className={styles.container}>
@@ -19,8 +23,8 @@ const SearchBar = ({
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={handleSearch}
-          onPressIn={() => {
-            if (searchHistory.length >= 1) {
+          onPressIn={async () => {
+            if (searchHistory.length > 0 && recommended.length > 0) {
               setSearchModalVisible(true);
             } else {
               ToastAndroid.show("Please search at least one product", ToastAndroid.SHORT);

@@ -25,7 +25,7 @@ const SearchModal = ({
     Keyboard.dismiss();
     await fetchRecommendedProduct();
     await getSearchHistory();
-    await fetchProducts({ query: term, category: selectedCategory ?? "",reset:true });
+    await fetchProducts({ query: term, category: selectedCategory,reset:true });
 
   };
 

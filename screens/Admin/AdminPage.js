@@ -77,7 +77,7 @@ const AdminPage = () => {
     setLoading(true);
     setNoProductsFound(false); // Reset before search
     try {
-      const response = await axios.get("https://reactnativeproject.onrender.com/fetchproducts", {
+      const response = await axios.get("https://reactnativeproject.onrender.com/adminfetchproducts", {
         params: {
           query: searchQuery, // search by product name
           category: selectedCategory === "all" ? "" : selectedCategory, // search by category
