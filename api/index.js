@@ -650,6 +650,45 @@ app.get("/fetchproducts", async (req, res) => {
 });
 
 
+//fetchRecommendedProducinSearchMoodal
+app.get("/fetch-recommeneded-products/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    const history = user?.searchhistory ?? [];
+
+    if (history.length === 0) return res.json([]);
+
+    // Sort by most recent and take top 5
+    const recent = history
+      .sort((a, b) => new Date(b.searchedAt) - new Date(a.searchedAt))
+      .slice(0, 5);
+
+    // Build regex filters for product name
+    const filters = recent.map(({ historyname }) => ({
+      name: { $regex: historyname, $options: "i" },
+    }));
+
+    // Find matching products
+    const products = await Product.find({ $or: filters });
+
+    // Sort products by most recently searched keyword match
+    const sorted = products.sort((a, b) => {
+      const getDate = (name) =>
+        recent.find((entry) =>
+          new RegExp(entry.historyname, "i").test(name)
+        )?.searchedAt || new Date(0);
+
+      return new Date(getDate(b.name)) - new Date(getDate(a.name));
+    });
+
+    // Return top 10 results
+    res.json(sorted.slice(0, 10));
+  } catch (err) {
+    console.error("Error fetching recommended products:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 /* --------------------------------------------------------------------- */
 /* User Cart Function                                                    */

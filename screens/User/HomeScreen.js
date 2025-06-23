@@ -28,7 +28,8 @@ import AddressDisplay from "../../components/HomeScreen/AddressDisplay/AddressDi
 import AddressModal from "../../components/HomeScreen/AddressModal/AddressModal";
 import NoProductsMessage from "../../components/HomeScreen/NoProductsMessage/NoProductsMessage";
 import ProductCard from "../../components/HomeScreen/ProductCard/ProductsCard.";
-
+import useProductCard from "../../hooks/useProductCard";
+import useProducts from "../../hooks/useProducts";
 
 const HomeScreen = () => {
   const flatListRef = useRef(null);
@@ -37,6 +38,7 @@ const HomeScreen = () => {
   const insets = useSafeAreaInsets();
   const [categoryName, setCategoryName] = useState("");
   const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [products, setProducts] = useState([]);
   const showNoProducts = useNoProducts({ refreshing, products });
 
   useBackButtonHandler({
@@ -47,87 +49,15 @@ const HomeScreen = () => {
     },
   });
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [skip, setSkip] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const limit = 5;
-  const lastLoadTime = useRef(0); // store timestamp of last load
-  const hasCalledEnd = useRef(false);
 
-  const fetchProducts = async ({
-    query = "",
-    category = "",
-    reset = false,
-    skip: customSkip = 0,
-  }) => {
-    try {
-      if (reset) setRefreshing(true);
+  const {
+    refreshing,
+    isLoadingMore,
+    fetchProducts,
+    loadMoreData,
+    refreshList, // ✅ Add this line
+  } = useProducts({ userId, products, setProducts });
 
-      const res = await axios.get(
-        "https://reactnativeproject.onrender.com/fetchproducts",
-        {
-          params: {
-            query: query.trim() || undefined,
-            category: category || undefined,
-            userId,
-            skip: customSkip,
-            limit,
-          },
-        }
-      );
-
-      const fetchedProducts = Array.isArray(res?.data?.data) ? res.data.data : [];
-      console.log("✅ Products fetched:", fetchedProducts.length);
-
-      if (reset) {
-        setProducts(fetchedProducts);
-        setSkip(fetchedProducts.length);
-      } else {
-        setProducts((prev) => [...prev, ...fetchedProducts]);
-        setSkip((prev) => prev + fetchedProducts.length);
-      }
-
-      const moreAvailable = fetchedProducts.length > 0 && fetchedProducts.length === limit;
-      setHasMore(moreAvailable);
-      hasCalledEnd.current = !moreAvailable; // ✅ Block further loads if no more
-    } catch (err) {
-      console.error("Fetch error:", err?.response?.data || err.message);
-    } finally {
-      if (reset) setRefreshing(false);
-
-  // Delay hiding spinner slightly to allow UI to catch up
-  setTimeout(() => {
-    setIsLoadingMore(false);
-  }, 3000);
-    }
-  };
-
-  const loadMoreData = () => {
-    console.log("📦 loadMoreData triggered — hasMore:", hasMore, "isLoadingMore:", isLoadingMore, "hasCalledEnd:", hasCalledEnd.current);
-  
-    const now = Date.now();
-  
-    if (!hasMore || isLoadingMore || hasCalledEnd.current) {
-      console.log("⚠️ Skipping loadMoreData...");
-      return;
-    }
-  
-    if (now - lastLoadTime.current < 3000) {
-      console.log("⏳ Wait before loading more.");
-      return;
-    }
-  
-    lastLoadTime.current = now;
-    setIsLoadingMore(true);
-  
-    fetchProducts({
-      query: searchQuery,
-      category: categoryName,
-      skip,
-    });
-  };
 
   const {
     searchQuery,
@@ -159,6 +89,12 @@ const HomeScreen = () => {
 
   const renderProductItem = ({ item }) => <ProductCard item={item} />;
 
+  const uniqueProducts = Array.from(
+    new Map(
+      (Array.isArray(products) ? products : []).map(item => [item._id, item])
+    ).values()
+  );
+
 
 
   return (
@@ -174,23 +110,27 @@ const HomeScreen = () => {
     >
       <FlatList
         ref={flatListRef}
-        data={products}
+        data={uniqueProducts}
+        keyExtractor={(item, index) =>
+          item && item._id && typeof item._id === 'string'
+            ? item._id
+            : `fallback-${index}`
+        }
         numColumns={2}
         renderItem={renderProductItem}
-        keyExtractor={(item) => item._id.toString()}
         onEndReachedThreshold={0.5}
-        onEndReached={loadMoreData}
+        onEndReached={() => {
+          loadMoreData({
+            query: searchQuery,
+            category: categoryName,
+          });
+        }}
         maintainVisibleContentPosition={{
           minIndexForVisible: 0,
         }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => {
-              setSkip(0);
-              hasCalledEnd.current = false; // ✅ Reset
-              fetchProducts({ query: "", category: "", reset: true });
-            }}
           />
         }
         ListFooterComponent={() =>
