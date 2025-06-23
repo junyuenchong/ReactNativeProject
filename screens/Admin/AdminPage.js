@@ -606,7 +606,7 @@ const AdminPage = () => {
                     return (
                       <Image
                         key={index}
-                        source={{ uri: url.imageUrl }}
+                        source={{ uri: url}}
                         style={styles.productImage}
                         resizeMode="cover"
                         onError={(e) => {

@@ -1112,7 +1112,7 @@ app.put("/products/:id", upload.array("image", 3), async (req, res) => {
     }
 
     if (req.files && req.files.length > 0) {
-      const newImages = req.files.map((file) => `uploads/${file.filename}`);
+      const newImages = req.files.map((file) => file.path); // ✅ This is the full Cloudinary URL
       imageUrls = [...imageUrls, ...newImages];
     }
 
