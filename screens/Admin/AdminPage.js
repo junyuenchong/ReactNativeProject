@@ -660,7 +660,7 @@ const AdminPage = () => {
         </Text>
       </TouchableOpacity>
 
-      {/* Product Modal */}
+      {/* Edit/Add Product Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: 300,
+    width: 400,
     padding: 16,
     backgroundColor: "white",
     borderRadius: 8,
@@ -1001,7 +1001,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   imagePreview: {
-    width: 100,
+    width: 80,
     height: 100,
     marginBottom: 16,
   },

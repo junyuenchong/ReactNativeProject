@@ -601,7 +601,7 @@ app.get("/orders/:userId", async (req, res) => {
 
 //  get User Home products
 app.get("/fetchproducts", async (req, res) => {
-  const { query, category, userId, skip = 0, limit = 10 } = req.query;
+  const { query, category, userId, skip = 0, limit = 8 } = req.query;
 
   try {
     const filter = {};
@@ -631,8 +631,11 @@ app.get("/fetchproducts", async (req, res) => {
         ? await Category.findById(category, "_id")
         : await Category.findOne({ name: category }, "_id");
 
-      if (!cat) return res.status(404).json({ message: "Category not found" });
-      filter.category = cat._id;
+      if (cat) {
+        filter.category = cat._id;
+      } else {
+        console.warn("⚠️ Category not found. Continuing without category filter.");
+      }
     }
 
     // 3. Fetch with skip & limit (pagination)

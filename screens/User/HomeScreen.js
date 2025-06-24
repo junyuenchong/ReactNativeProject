@@ -55,7 +55,6 @@ const HomeScreen = () => {
     isLoadingMore,
     fetchProducts,
     loadMoreData,
-    refreshList, // ✅ Add this line
   } = useProducts({ userId, products, setProducts });
 
 

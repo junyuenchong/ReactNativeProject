@@ -9,8 +9,8 @@ export default function useProductCard(item) {
       id: item._id,
       title: item.name,
       price: item?.price,
-      carouselImages: item.imageUrls.map(
-        (url) => `https://reactnativeproject.onrender.com/${url}`
+      carouselImages: item.imageUrls.map((url) =>
+        url.startsWith("http") ? url : `https://reactnativeproject.onrender.com/${url}`
       ),
       color: item.colour,
       size: item.description,
@@ -20,7 +20,12 @@ export default function useProductCard(item) {
     });
   };
 
-  const imageUrl = `https://reactnativeproject.onrender.com/${item.imageUrls[0]}`;
+  const imageUrl = item?.imageUrls?.[0]
+  ? item.imageUrls[0].startsWith("http")
+    ? item.imageUrls[0]
+    : `https://reactnativeproject.onrender.com/${item.imageUrls[0]}`
+  : "https://via.placeholder.com/150";
+
 
   return { handleNavigate, imageUrl };
 }

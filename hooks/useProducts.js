@@ -15,7 +15,7 @@ export default function useProducts({ userId, limit = 5, products, setProducts }
     async ({ query = "", category = "", reset = false, customSkip = 0 }) => {
       if (reset) setRefreshing(true);
       try {
-        const { data } = await axios.get("https://reactnativeproject.onrender.com/adminfetchproducts", {
+        const { data } = await axios.get("https://reactnativeproject.onrender.com/fetchproducts", {
           params: {
             query: query.trim() || undefined,
             category: category || undefined,

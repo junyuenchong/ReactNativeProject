@@ -4,7 +4,7 @@ import axios from "axios";
 import { Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function useSearchBar({ userId, selectedCategory, fetchProducts }) {
+export default function useSearchBar({ userId, selectedCategory, fetchProducts}) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
   const [recommended, setRecommended] = useState([]);
@@ -64,13 +64,10 @@ export default function useSearchBar({ userId, selectedCategory, fetchProducts }
 
   // ⏱️ Pull-to-refresh logic (exported to HomeScreen)
   const onRefresh = useCallback(async () => {
-    setSkip(0);
-    hasCalledEnd.current = false;
     await fetchProducts({
       query: searchQuery,
       category: selectedCategory,
       reset: true,
-      skip: 0,
     });
   }, [searchQuery, selectedCategory]);
 
